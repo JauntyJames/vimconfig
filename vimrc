@@ -14,19 +14,22 @@ call vundle#begin()
 
 " let vundle load plugins
 Plugin 'Vundlevim/Vundle.vim'
-Plugin 'vim-airline/vim-airline'
-Plugin 'scrooloose/nerdtree'
-Plugin 'surround.vim'
-Plugin 'tpope/vim-fugitive'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'Valloric/MatchTagAlways'
-Plugin 'Yggdroot/indentLine'
-Plugin 'skielbasa/vim-material-monokai'
-Plugin 'Townk/vim-autoclose'
-Plugin 'sheerun/vim-polyglot'
+Plugin 'jiangmiao/auto-pairs'
 Plugin 'tpope/vim-commentary'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-repeat'
+Plugin 'scrooloose/nerdtree'
+Plugin 'SirVer/ultisnips'
+Plugin 'sheerun/vim-polyglot'
+Plugin 'skielbasa/vim-material-monokai'
+Plugin 'surround.vim'
+Plugin 'Valloric/MatchTagAlways'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-snippets'
 Plugin 'w0rp/ale'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'Yggdroot/indentLine'
 
 call vundle#end()
 filetype plugin indent on
@@ -39,6 +42,9 @@ let g:materialmonokai_italic=1
 let g:materialmonokai_subtle_spell=1
 set macligatures " this shit: => !== <->
 set guifont=Fira\ Code:h12
+
+" airline tab bar
+let g:airline#extensions#tabline#enabled = 1 
 let g:airline_powerline_fonts = 1 " makes status bar look better
 set list listchars=tab:»·,trail:·,nbsp:·   " Display extra whtiespace
 set nojoinspaces  " use one space, not two, after punctuation
@@ -157,3 +163,6 @@ nnoremap <Left> :echoe "Use h"<CR>
 nnoremap <Right> :echoe "Use l"<CR>
 nnoremap <Up> :echoe "Use k"<CR>
 nnoremap <Down> :echoe "Use j"<CR>
+
+" Don't search in node_module folder
+set wildignore+='*/node_modules/*'
