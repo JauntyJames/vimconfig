@@ -5,9 +5,12 @@ set showcmd        " display incomplete commands
 set autowrite      " automatically :write before running commands
 set showcmd
 
+" encoding for vim-devicons
+set encoding=UTF-8
+
 "for indents that consist of 4 space characters
 " but are entered with the tab key
-set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab
+set tabstop=8 softtabstop=4 expandtab shiftwidth=4 smarttab
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -15,37 +18,56 @@ call vundle#begin()
 " let vundle load plugins
 Plugin 'Vundlevim/Vundle.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
+Bundle 'ervandew/supertab'
 Plugin 'jiangmiao/auto-pairs'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-repeat'
+Plugin 'machakann/vim-highlightedyank'
+Plugin 'morhetz/gruvbox'
+Plugin 'ryanoasis/vim-devicons'
 Plugin 'scrooloose/nerdtree'
 Plugin 'SirVer/ultisnips'
 Plugin 'sheerun/vim-polyglot'
-Plugin 'skielbasa/vim-material-monokai'
 Plugin 'surround.vim'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-repeat'
 Plugin 'Valloric/MatchTagAlways'
+Plugin 'valloric/youcompleteme'
 Plugin 'vim-airline/vim-airline'
-Plugin 'vim-snippets'
+Plugin 'honza/vim-snippets'
 Plugin 'w0rp/ale'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'Yggdroot/indentLine'
 
 call vundle#end()
 filetype plugin indent on
 
 set background=dark
 set termguicolors
-set guioptions=          " removes scrollbars
-colorscheme material-monokai
-let g:materialmonokai_italic=1
-let g:materialmonokai_subtle_spell=1
+" removes scrollbars from gui
+set guioptions=
+colorscheme gruvbox
 set macligatures " this shit: => !== <->
-set guifont=Fira\ Code:h12
+set guifont=FuraCode\ nerd\ font:h14
+
+" fix rendering of filetype icons
+" set ambiwidth=double
+"
+autocmd FileType nerdtree setlocal nolist
+
+" let g:WebDevIconsNerdTreeAfterGlyphPadding = '  '
 
 " airline tab bar
 let g:airline#extensions#tabline#enabled = 1 
 let g:airline_powerline_fonts = 1 " makes status bar look better
+
+" display linter warnings in status bar
+let g:airline#extenstions#ale#enabled = 1
+" configure airline seperators
+let g:airline_left_sep=""
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep=""
+let g:airline_right_alt_sep = ''
+let g:airline#extensions#tabline#left_sep=""
+let g:airline#extensions#tabline#right_sep=""
 set list listchars=tab:»·,trail:·,nbsp:·   " Display extra whtiespace
 set nojoinspaces  " use one space, not two, after punctuation
 " Make it obvious where 80 characters is
@@ -55,17 +77,17 @@ set colorcolumn=+1
 " Tab completion
 " will insert tab at beginning of line,
 " will use completion if not at beginning
-set wildmode=list:longest,list:full
-function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<Tab>"
-    else
-        return "\<C-p>"
-    endif
-endfunction
-inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
-inoremap <S-Tab> <C-n>
+" set wildmode=list:longest,list:full
+" function! InsertTabWrapper()
+"     let col = col('.') - 1
+"     if !col || getline('.')[col - 1] !~ '\k'
+"         return "\<Tab>"
+"     else
+"         return "\<C-p>"
+"     endif
+" endfunction
+" inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
+" inoremap <S-Tab> <C-n>
 " enables hybrid numbers by default, relative in insert mode, and toggles
 " when out of focus
 
@@ -82,11 +104,12 @@ set hlsearch
 
 let NERDTreeShowHidden=1
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let NERDTreeIgnore = ['\.DS_Store$']
 
-let mapleader = ","
+nnoremap <SPACE> <Nop>
+let mapleader = " "
 nmap <leader>ne :NERDTree<cr>
 " FINDING FILES:
 " search down into subfolders
@@ -141,13 +164,28 @@ set tags=./tags,tags;$HOME
 nnoremap ,html :-1read $HOME/.vim/snippets/.skeleton.html<CR>6jwf>
 nnoremap ,fetch :-1read $HOME/.vim/snippets/.fetch.js<CR>wla
 
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+" closes autocomplete prompt so that you can tab-expand snippets
+let g:ycm_key_list_stop_completion = ['<C-y>']
+
 " Now we can:
 " - Take over the world!
 " (with fewer keystrokes)
 
-:imap jj <Esc>
 map <C-n> :NERDTreeToggle<CR>
-nnoremap <C-i> i_<Esc>r
+nnoremap <leader>i i_<Esc>r
 " remaps ^i to insert one character
 
 set viminfo='1000,f1,<500
@@ -166,3 +204,76 @@ nnoremap <Down> :echoe "Use j"<CR>
 
 " Don't search in node_module folder
 set wildignore+='*/node_modules/*'
+
+" Linter settings
+" let g:ale_javascript_eslint_use_global = 1
+
+" use a split expolorer instead of project drawer
+let NERDTreeHijackNetrw=1
+
+let g:WebDevIconsUnicodeDecorateFolderNodes = 1
+let g:DevIconsEnableFoldersOpenClose = 1
+  " change the default folder/directory glyph/icon
+" let g:WebDevIconsUnicodeDecorateFolderNodesDefaultSymbol = ''
+  " change the default open folder/directory glyph/icon (default is '')
+" let g:DevIconsDefaultFolderOpenSymbolnSymbol = ''
+" change the default dictionary mappings for exact file node matches
+
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols = {} " needed
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['Gemfile'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['Gemfile.lock'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['.ruby-version'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['Rakefile'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['.railsrc'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['.gitignore'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['.gitignore_global'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['.gitconfig'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['.git'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExactSymbols['.github'] = ''
+" add or override pattern matches for filetypes
+" these take precedence over the file extensions
+
+let g:WebDevIconsUnicodeDecorateFileNodesPatternSymbols = {} " needed
+let g:WebDevIconsUnicodeDecorateFileNodesPatternSymbols['.*spec.*\.rb$'] = ''
+let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1
+
+
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" change cursor shape in iterm
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+" change cursor shape in tmux vim
+let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+
+" mouse settings
+set mouse=a
+if has("mouse_sgr")
+    set ttymouse=sgr
+else
+    set ttymouse=xterm2
+  end
+
+" Quickly select the text that was just pasted. This allows you to, e.g.,
+" indent it after pasting.
+noremap gV `[v`]
+
+" Stay in visual mode when indenting. You will never have to run gv after
+" performing an indentation.
+vnoremap < <gv
+vnoremap > >gv
+
+" Make Y yank everything from the cursor to the end of the line. This makes Y
+" act more like C or D because by default, Y yanks the current line (i.e. the
+" same as yy).
+noremap Y y$
+
+" Allows you to easily replace the current word and all its occurrences.
+nnoremap <Leader>rc :%s/\<<C-r><C-w>\>/
+vnoremap <Leader>rc y:%s/<C-r>"/
+
+let g:highlightedyank_highlight_duration = 500
